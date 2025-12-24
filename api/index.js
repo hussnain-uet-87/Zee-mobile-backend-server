@@ -6,30 +6,35 @@ import salesRoutes from "../routes/sale.js";
 import analyticsRoute from "../routes/analyticsRoute.js";
 import loanRoutes from "../routes/loanRoutes.js";
 
-import path from "path";
-import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.join(__dirname, "../.env") });console.log("Checking MONGO_URI:", process.env.MONGO_URI ? "Found" : "NOT FOUND");
-
+// Safe Dotenv loading for local and production
+dotenv.config(); 
 
 const app = express();
+
 const corsOptions = {
-  origin: "https://zee-frontend.vercel.app/", // 🚨 Replace with your REAL frontend URL
+  origin: "https://zee-frontend.vercel.app", // IDENTICAL to your web URL
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+  optionsSuccessStatus: 200
 };
 
 app.use(cors(corsOptions));
 app.use(express.json());
 
-connectDB();
-app.get("/", (req, res) => res.send("API running"));
+// DATABASE MIDDLEWARE: This ensures DB is connected BEFORE routes run
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).json({ error: "Database Connection Failed" });
+  }
+});
+
+app.get("/", (req, res) => res.send("Zee Mobile API running"));
 app.use("/api/sales", salesRoutes);
 app.use("/api/analytics", analyticsRoute);
 app.use("/api/loans", loanRoutes);
 
-export default app; // 🚨 THIS IS WHAT VERCEL NEEDS
+export default app;
