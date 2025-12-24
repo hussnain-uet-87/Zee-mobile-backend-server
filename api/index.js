@@ -9,8 +9,15 @@ import loanRoutes from "../routes/loanRoutes.js";
 dotenv.config();
 
 const app = express();
+const corsOptions = {
+  origin: "https://zee-frontend.vercel.app/", // 🚨 Replace with your REAL frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+  optionsSuccessStatus: 200 // Some legacy browsers choke on 204
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 connectDB();
