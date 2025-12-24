@@ -1,20 +1,8 @@
+import Sale from "../models/Sale.js";
+
 export const getMonthlyAnalytics = async (req, res) => {
   try {
-    const now = new Date();
-    // Get the first day of the current month (UTC)
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    // Get the last day of the current month (UTC)
-    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
-
     const analytics = await Sale.aggregate([
-      {
-        $match: {
-          date: {
-            $gte: startOfMonth,
-            $lte: endOfMonth,
-          },
-        },
-      },
       {
         $group: {
           _id: null,
@@ -25,15 +13,18 @@ export const getMonthlyAnalytics = async (req, res) => {
       },
     ]);
 
-    // Send result or defaults if no sales found for this month
-    res.status(200).json(
-      analytics[0] || {
-        totalSales: 0,
-        totalExpenses: 0,
-        profit: 0,
-      }
-    );
+    // If database is empty, return zeros instead of null
+    const result = analytics[0] || {
+      totalSales: 0,
+      totalExpenses: 0,
+      profit: 0,
+    };
+
+    res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: "Failed to calculate total analytics",
+      error: error.message,
+    });
   }
 };
