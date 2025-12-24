@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 connectDB();
-
+app.get("/", (req, res) => res.send("API running"));
 app.use("/api/sales", salesRoutes);
 app.use("/api/analytics", analyticsRoute);
 app.use("/api/loans", loanRoutes);
