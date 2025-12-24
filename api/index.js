@@ -22,7 +22,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// DATABASE MIDDLEWARE: This ensures DB is connected BEFORE routes run
 app.use(async (req, res, next) => {
   try {
     await connectDB();
