@@ -8,7 +8,7 @@ import loanRoutes from "../routes/loanRoutes.js";
 
 // Safe Dotenv loading for local and production
 dotenv.config(); 
-
+await connectDB();
 const app = express();
 
 const corsOptions = {
@@ -22,14 +22,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use(async (req, res, next) => {
-  try {
-    await connectDB();
-    next();
-  } catch (err) {
-    res.status(500).json({ error: "Database Connection Failed" });
-  }
-});
+
 
 app.get("/", (req, res) => res.send("Zee Mobile API running"));
 app.use("/api/sales", salesRoutes);
