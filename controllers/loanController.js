@@ -12,10 +12,11 @@ export const getLoans = async (req, res) => {
 };
 
 // POST new loan
+// server/controllers/loanController.js
 export const addLoan = async (req, res) => {
-  const { name, amount, issueDate, reason } = req.body;
+  const { name, amount, issueDate, reason, type } = req.body; // Added type
   try {
-    const loan = new Loan({ name, amount, issueDate, reason });
+    const loan = new Loan({ name, amount, issueDate, reason, type });
     const savedLoan = await loan.save();
     res.status(201).json(savedLoan);
   } catch (err) {
